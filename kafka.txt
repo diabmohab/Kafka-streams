@@ -1,11 +1,12 @@
 from kafka import KafkaProducer
+
 KAFKA_TOPIC = 'kafka_sp'
-KAFKA_BROKERS = 'localhost:9092'
+KAFKA_BROKERS = 'hadoop-master:9093'
 
 producer = KafkaProducer(bootstrap_servers=KAFKA_BROKERS)
 
 # Must send bytes
-messages = ['hello kafka', 'I am sending', '3 test messages']
+#messages = ['hello kafka', 'I am sending', '3 test messages']
 
 # Send the messages
 #for m in messages:
@@ -21,8 +22,8 @@ while True:
 import sys # used to exit
 from kafka import KafkaConsumer
  
-KAFKA_TOPIC = 'PyTest2'
-KAFKA_BROKERS = 'localhost:9092' # see step 1
+KAFKA_TOPIC = 'demo'
+KAFKA_BROKERS = 'value_from_plain_text_endpoint' # see step 1
  
 consumer = KafkaConsumer(KAFKA_TOPIC, bootstrap_servers=KAFKA_BROKERS, 
                          auto_offset_reset='earliest')

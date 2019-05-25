@@ -1,0 +1,44 @@
+https://pypi.org/project/PyHive/
+==========
+pip install pyhive
+======================
+!connect jdbc:hive2://hadoop-master:10000/ hadoop 123456 org.apache.hive.jdbc.HiveDriver
+===============
+from pyhive import hive
+
+host_name = "192.168.0.38"
+port = 10000
+user = "admin"
+password = "password"
+database="test_db"
+
+def hiveconnection(host_name, port, user,password, database):
+    conn = hive.Connection(host=host_name, port=port, username=user, password=password,
+                           database=database, auth='CUSTOM')
+    cur = conn.cursor()
+    cur.execute('select item_sk,reason_sk, account_credit from returns limit 5')
+    result = cur.fetchall()
+
+    return result
+
+# Call above function
+output = hiveconnection(host_name, port, user,password, database)
+print(output)
+============================================================
+from pyhive import hive
+conn = hive.Connection(host="<host>", port=10000, username="<username>", password="<your pwd>", auth='CUSTOM')
+cur = conn.cursor()
+cur.execute('select * from <table>');
+print cur.fetchone()
+============================================================
+from pyhive import hive
+import pandas as pd
+
+conn = hive.Connection(host="hadoop-master", port=10000, username="hadoop")
+
+# Read Hive table and Create pandas dataframe
+df = pd.read_sql("SELECT * FROM airports limit 10", conn)
+print(df.head())
+
+only_gold = df.where(df['airports.country'] == 'US')
+only_gold.head()

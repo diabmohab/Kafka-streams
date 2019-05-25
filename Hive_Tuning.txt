@@ -1,0 +1,22 @@
+--Compute table statistics
+analyze table test compute statistics;
+analyze table test compute statistics for columns;
+
+--Hive Partitioning
+set hive.exec.dynamic.partition=true;  
+set hive.exec.dynamic.partition.mode=nonstrict; 
+set hive.exec.max.dynamic.partitions=100000;
+set hive.exec.max.dynamic.partitions.pernode=10000;
+
+
+--ORC Table, Prtitioned, Bucket
+CREATE TABLE Test (id int,amount double,name string) PARTITIONED BY(country string) clustered by (id) into 8 buckets stored as orc TBLPROPERTIES ("transactional"="true","orc.compress"="SNAPPY","orc.compress.size"="262144", "orc.stripe.size"="134217728", "orc.row.index.stride"="100000","orc.create.index"="true","orc.bloom.filter.columns"="country");
+
+
+--Hive Acid Table
+set hive.support.concurrency=true;
+set hive.enforce.bucketing=true;
+set hive.exec.dynamic.partition.mode=nonstrict;
+set hive.txn.manager=org.apache.hadoop.hive.ql.lockmgr.DbTxnManager;
+set hive.compactor.initiator.on=true;
+set hive.compactor.worker.threads=2;
