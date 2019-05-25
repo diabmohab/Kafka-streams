@@ -1,0 +1,43 @@
+#Control
+cd $KAFKA_HOME/bin
+nohup zookeeper-server-start.sh ../config/zookeeper.properties &
+nohup kafka-server-start.sh ../config/server.properties &
+
+#Topic
+kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic my-topic
+kafka-topics.sh --list --zookeeper localhost:2181
+kafka-topics.sh --zookeeper localhost:2181 --alter --topic my-topic --partitions 16
+kafka-topics.sh --zookeeper localhost:2181 --delete --topic my-topic
+kafka-topics.sh --zookeeper localhost:2181 --list
+kafka-topics.sh --zookeeper localhost:2181/kafka-cluster --describe
+kafka-topics.sh --zookeeper localhost:2181/kafka-cluster --describe --under-replicated-partitions
+
+#Producers
+kafka-console-producer.sh --broker-list localhost:9092 --topic my-topic
+#Consumers
+kafka-console-consumer.sh --zookeeper localhost:2181 --bootstrap-server localhost:9092 --topic my-topic --from-beginning
+
+
+kafka-console-producer.sh --broker-list localhost:9092 --topic test < messages.txt
+kafka-avro-console-producer.sh --broker-list localhost:9092 --topic my-Topic --property value.schema='{"type":"record","name":"myrecord","fields":[{"name":"f1","type":"string"}]}' --property schema.registry.url=http://localhost:8081
+{"f1": "value1"}
+{"f2": "value2"}
+
+
+
+#Consumers
+kafka-console-consumer.sh --zookeeper localhost:2181 --bootstrap-server localhost:9092 --topic my-topic --from-beginning
+kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-topic  --max-messages 1
+kafka-console-consumer --bootstrap-server localhost:9092 --topic __consumer_offsets --formatter 'kafka.coordinator.GroupMetadataManager$OffsetsMessageFormatter' --max-messages 1
+kafka-console-consumer --topic my-topic --new-consumer --bootstrap-server localhost:9092 --consumer-property group.id=my-group
+kafka-avro-console-consumer --topic position-reports --new-consumer --bootstrap-server localhost:9092 --from-beginning --property schema.registry.url=localhost:8081 --max-messages 10
+kafka-avro-console-consumer --topic position-reports --new-consumer --bootstrap-server localhost:9092 --from-beginning --property schema.registry.url=localhost:8081
+
+
+kafka-consumer-groups --new-consumer --list --bootstrap-server localhost:9092
+kafka-consumer-groups --bootstrap-server localhost:9092 --describe --group testgroup
+
+#Config
+kafka-configs --zookeeper localhost:2181 --alter --entity-type topics --entity-name my-topic --add-config retention.ms=3600000
+kafka-configs --zookeeper localhost:2181 --describe --entity-type topics --entity-name my-topic
+kafka-configs --zookeeper localhost:2181 --alter --entity-type topics --entity-name my-topic --delete-config retention.ms

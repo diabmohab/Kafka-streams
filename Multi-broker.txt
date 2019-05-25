@@ -1,0 +1,20 @@
+cp server.properties config/server-1.properties
+cp server.properties config/server-2.properties
+
+config/server-1.properties:
+    broker.id=1
+    listeners=PLAINTEXT://:9093
+    log.dirs=/tmp/kafka-logs-1
+
+config/server-2.properties:
+    broker.id=2
+    listeners=PLAINTEXT://:9094
+    log.dirs=/tmp/kafka-logs-2
+	
+bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic my-replicated-topic
+
+bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic my-replicated-topic
+
+bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic test
+
+bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic my-replicated-topic
